@@ -1,0 +1,3 @@
+databaseChangeLog:
+  - include:
+      file: classpath:/dbschema/changelog-1.0.0.yml

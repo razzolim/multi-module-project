@@ -1,0 +1,34 @@
+logging:
+  level:
+    root: DEBUG
+    com.renan.webservice: DEBUG
+    liquibase=DEBUG:
+
+spring:
+  application:
+    name: multi-module-project
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+  liquibase:
+    enabled: true
+    change-log: classpath:/dbschema/changelog.yml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/yourdb
+    username: youruser
+    password: yourpassword
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+configuration:
+  rabbitmq:
+    main:
+      exch:
+        name: my-topic-exchange
+      routing-key: my-first-routing-key

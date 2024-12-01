@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'org.springframework.boot'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":repository")
+    implementation project(":rabbitmq:publisher")
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.named('bootJar') {
+    enabled = false
+}
+
+tasks.named('jar') {
+    enabled = true
+}

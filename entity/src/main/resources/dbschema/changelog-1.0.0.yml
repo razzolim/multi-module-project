@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1 - Creating initial tables for the project
+      author: Renan Azzolim
+      comment: Create initial tables
+      changes:
+        - sqlFile:
+            path: dbschemaupdate/1-initial-tables.sql
