@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'org.springframework.boot'
+}
+
+dependencies {
+    api project(":entity")
+    api ("org.springframework.boot:spring-boot-starter-data-jpa")
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('bootJar') {
+    enabled = false
+}
+
+tasks.named('jar') {
+    enabled = true
+}

@@ -1,0 +1,48 @@
+plugins {
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+    id 'java'
+}
+
+dependencies {
+    implementation project(":webservice")
+    implementation project(":service")
+    implementation project(":repository")
+    implementation project(":entity")
+    implementation project(":rabbitmq:consumer")
+    implementation project(":rabbitmq:publisher")
+    implementation("org.springframework.boot:spring-boot-starter")
+}
+
+tasks.named('bootJar') {
+    enabled = true
+}
+
+tasks.named('jar') {
+    enabled = false
+}
+
+task setup {
+    dependsOn ':docker:resources', ':liquibase:update'
+}
+
+tasks.register("resources", Exec) {
+    group = "Docker"
+    description = "Starts Docker Compose in detached mode"
+    workingDir = project.rootDir // Set the working directory to the project root
+    commandLine "docker", "compose", "up", "-d" // Command to execute
+
+    // Check for Docker CLI availability
+    doFirst {
+        if (!project.hasProperty('dockerPath')) {
+            throw new GradleException("Docker CLI is required but not found. Ensure Docker is installed and available in the system PATH.")
+        }
+    }
+}
+
+// Helper property to verify Docker CLI availability
+ext {
+    dockerPath = project.exec {
+        commandLine "docker", "--version"
+    }.exitValue == 0
+}
