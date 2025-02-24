@@ -1,8 +1,8 @@
 logging:
   level:
-    root: DEBUG
+    #root: DEBUG
     com.renan.webservice: DEBUG
-    liquibase=DEBUG:
+    #liquibase=DEBUG:
 
 spring:
   application:
@@ -20,11 +20,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/yourdb
     username: youruser
     password: yourpassword
-  jpa:
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+  #jpa:
+    #show-sql: true
+    #properties:
+      #hibernate:
+        #format_sql: true
 
 configuration:
   rabbitmq:

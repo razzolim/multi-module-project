@@ -12,6 +12,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Random;
 
 @Service
 public class RabbitMQListener {
@@ -20,13 +21,18 @@ public class RabbitMQListener {
 
 	private final ObjectMapper mapper;
 	private final CreateUserService createUserService;
+	private final Random random = new Random();
 
 	public RabbitMQListener(ObjectMapper mapper, CreateUserService createUserService) {
 		this.mapper = mapper;
 		this.createUserService = createUserService;
 	}
 
-	@RabbitListener(queues = {"my-first-queue"}, ackMode = "MANUAL")
+	@RabbitListener(
+		queues = {"my-first-queue"},
+		ackMode = "MANUAL",
+		containerFactory = "rabbitListenerContainerFactory"
+	)
 	public void receive(String message, Channel channel, Message details) throws IOException {
 		log.debug("Received user to be created? {}", message);
 
@@ -36,17 +42,24 @@ public class RabbitMQListener {
 			return;
 		}
 
+		int v = random.nextInt(101);
+		if (v % 2 == 0) {
+			log.error("Error processing, message being re-queued...");
+			channel.basicReject(details.getMessageProperties().getDeliveryTag(), false);
+		}
+
 		try {
+			Thread.sleep(10000);
+			log.info("Processing received message: {}", message);
+
 			CreateUserDTO userDto = mapper.readValue(message, CreateUserDTO.class);
 			createUserService.create(userDto);
-		} catch (JsonProcessingException ex) {
+		} catch (JsonProcessingException | InterruptedException ex) {
 			log.error("Failed to read message due to bad format. Message: {}", message, ex);
 			channel.basicReject(details.getMessageProperties().getDeliveryTag(), false);
 			log.warn("User creation rejected: {}", message);
 			return;
 		}
-
-		log.info("Processing received message: {}", message);
 		channel.basicAck(details.getMessageProperties().getDeliveryTag(), false);
 	}
 

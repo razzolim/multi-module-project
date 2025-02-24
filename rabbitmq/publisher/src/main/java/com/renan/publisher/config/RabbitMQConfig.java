@@ -42,7 +42,7 @@ public class RabbitMQConfig {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("x-dead-letter-exchange", "dlx-exchange");
 		map.put("x-dead-letter-routing-key", "dlx-routing-key");
-		map.put("x-message-ttl", 60000);
+		map.put("x-message-ttl", (1000 * 60) * 60);
 
 		return new Queue(
 			"my-first-queue", true, false, false, map
